@@ -14,7 +14,7 @@
     <PropertyColumn Property="@(e => e.CreatedDate)" Format="yyyy-MM-dd" Sortable="true" />
     <TemplateColumn Title="Actions" Class="no-padding-column">
         <FluentButton Appearance="Appearance.Accent" 
-                      OnClick="AddElement" >
+                      OnClick="@(() => DeleteItem(context))">
             <FluentIcon Value="@(new Icons.Regular.Size20.Delete())" Color="Color.Fill" Style="vertical-align: middle;" />
         </FluentButton>
     </TemplateColumn>

@@ -25,6 +25,8 @@ namespace Generous.Components.Pages.ElementPages
         {
             using var _context = DbFactory.CreateDbContext();
             _elementList = await _context.Elements.ToListAsync();
+
+            StateHasChanged();
         }
         private async Task AddElement()
         {
@@ -39,8 +41,15 @@ namespace Generous.Components.Pages.ElementPages
                 _context.SaveChanges();
 
                 await LoadDataAsync();
-                StateHasChanged();
             }
+        }
+
+        private async Task DeleteItem(Element e) { 
+            using var _context = DbFactory.CreateDbContext();
+            _context.Remove(e);
+            _context.SaveChanges();
+
+            await LoadDataAsync();
         }
 
         private async Task<Element?> OpenElementDialog(Element element)
