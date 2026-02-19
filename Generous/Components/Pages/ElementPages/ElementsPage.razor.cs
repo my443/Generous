@@ -44,17 +44,49 @@ namespace Generous.Components.Pages.ElementPages
             }
         }
 
-        private async Task DeleteItem(Element e) { 
-            using var _context = DbFactory.CreateDbContext();
-            _context.Remove(e);
-            _context.SaveChanges();
+        private async Task DeleteItem(Element element)
+        {
 
-            await LoadDataAsync();
+            // 1. Show the built-in confirmation dialog
+            var dialog = await DialogService.ShowConfirmationAsync(
+                message: $"Are you sure you want to delete '{element.Name}'?",
+                primaryText: "Delete",
+                secondaryText: "Cancel",
+                title: "Confirm Delete");
+
+            var result = await dialog.Result;
+
+            // 2. Check if the user clicked "Delete" (Primary Action)
+            // result.Cancelled is true if they click "Cancel" or the 'X'
+            if (!result.Cancelled)
+            {
+                using var _context = DbFactory.CreateDbContext();
+                _context.Remove(element);
+                _context.SaveChanges();
+
+                await LoadDataAsync();
+            }
+        }
+
+        private async Task EditItem(Element element)
+        {
+            Element? updatedElement = await OpenElementDialog(element);
+
+            if (updatedElement != null)
+            {
+
+                using var _context = DbFactory.CreateDbContext();
+                _context.Update(updatedElement);
+                _context.SaveChanges();
+
+                await LoadDataAsync();
+            }
         }
 
         private async Task<Element?> OpenElementDialog(Element element)
         {
             Element returnElement = element;
+            Element savedElement = CreateElementCopy(element);
 
             DialogParameters parameters = new()
             {
@@ -74,10 +106,24 @@ namespace Generous.Components.Pages.ElementPages
 
             if (result.Cancelled)
             {
-                return null;
-            }          
+                return savedElement;
+            }
 
             return returnElement;
+        }
+
+        // Returns a copy of the element to save later. 
+        private Element CreateElementCopy(Element element)
+        {
+            return new Element
+            {
+                Id = element.Id,
+                Name = element.Name,
+                Description = element.Description,
+                CreatedDate = element.CreatedDate,
+                ModifiedDate = element.ModifiedDate,
+                Fields = element.Fields
+            };
         }
 
     }

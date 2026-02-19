@@ -1,8 +1,21 @@
 ﻿@using Generous.Models
 @implements IDialogContentComponent<Element>
+@rendermode InteractiveServer
 
-<FluentTextField @bind-Value="@Content.Name">Element Name:</FluentTextField>
-<FluentTextField @bind-Value="@Content.Description">Element Description:</FluentTextField>
+<FluentStack Orientation="Orientation.Vertical" VerticalGap="15" Style="width: 100%;">
+    
+    <FluentTextField @bind-Value="NameValue"
+                     Style="width: 100%;">
+        Element Name:
+    </FluentTextField>
+
+    <FluentTextArea @bind-Value="@Content.Description"
+                    Rows="5"
+                    Style="width: 100%;">
+        Element Description:
+    </FluentTextArea>
+
+</FluentStack>
 
 @code {
     [Parameter]
@@ -10,6 +23,25 @@
 
     [CascadingParameter]
     public FluentDialog? Dialog { get; set; }
+
+    private string? NameValue
+    {
+        get => Content.Name;
+        set
+        {
+            if (Content.Name != value)
+            {
+                Content.Name = value;
+                // This fires every time the user types!
+                ToggleDialogPrimaryActionButton(!string.IsNullOrWhiteSpace(value));
+            }
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        ToggleDialogPrimaryActionButton(!string.IsNullOrWhiteSpace(Content.Name));
+    }
 
     private void ToggleDialogPrimaryActionButton(bool enable)
     {
