@@ -1,9 +1,18 @@
 ﻿@page "/fields"
 @using Generous.Models
 @using Icons = Microsoft.FluentUI.AspNetCore.Components.Icons
+@rendermode InteractiveServer
 
 <h3>Generous: Fields</h3>
 
-@code {
+<FluentSelect TOption="Element"
+              Label="Select Element"
+              Items="@ElementList"
+              Id="element-listbox"
+              Width="100%"
+              OptionText="@(e => e.Name)"
+              @bind-SelectedOption="@SelectedElement" />
 
-}
+
+    <p>@SelectedElement?.Name</p>
+
