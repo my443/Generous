@@ -74,6 +74,7 @@ namespace Generous.Components.Pages.ElementPages
 
             if (updatedElement != null)
             {
+                updatedElement.ModifiedDate = DateTime.Now.ToUniversalTime();
 
                 using var _context = DbFactory.CreateDbContext();
                 _context.Update(updatedElement);
