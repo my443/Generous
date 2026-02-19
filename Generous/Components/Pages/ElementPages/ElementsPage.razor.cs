@@ -18,7 +18,6 @@ namespace Generous.Components.Pages.ElementPages
         protected override async Task OnInitializedAsync()
         {
             await LoadDataAsync();
-            StateHasChanged();
         }
 
         private async Task LoadDataAsync()
