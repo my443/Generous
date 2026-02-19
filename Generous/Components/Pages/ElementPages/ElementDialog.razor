@@ -1,0 +1,18 @@
+﻿@using Generous.Models
+@implements IDialogContentComponent<Element>
+
+<FluentTextField @bind-Value="@Content.Name">Element Name:</FluentTextField>
+<FluentTextField @bind-Value="@Content.Description">Element Description:</FluentTextField>
+
+@code {
+    [Parameter]
+    public Element Content { get; set; } = default!;
+
+    [CascadingParameter]
+    public FluentDialog? Dialog { get; set; }
+
+    private void ToggleDialogPrimaryActionButton(bool enable)
+    {
+        Dialog!.TogglePrimaryActionButton(enable);
+    }
+}
