@@ -9,6 +9,9 @@ public class AppDbContext : DbContext
 
     // Add your DbSets here
     public DbSet<Element> Elements { get; set; }
+    public DbSet<Field> Fields { get; set; }
+    public DbSet<FieldType> FieldTypes {  get; set; }
+    public DbSet<CoreData> CoreData { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
