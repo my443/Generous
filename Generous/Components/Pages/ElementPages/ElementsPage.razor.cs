@@ -83,6 +83,12 @@ namespace Generous.Components.Pages.ElementPages
             }
         }
 
+        private async Task HandleRowClick(FluentDataGridRow<Element> args)
+        {
+            var clickedElement = args.Item;
+            await EditItem(clickedElement);
+        }
+
         private async Task<Element?> OpenElementDialog(Element element)
         {
             Element returnElement = element;

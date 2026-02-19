@@ -4,22 +4,24 @@
 
 @rendermode InteractiveServer
 
-<h3>ElementsPage</h3>
+<h3>Generous: Elements</h3>
 
 <FluentButton Appearance="Appearance.Accent" OnClick="AddElement">Add Element</FluentButton>
 
-<FluentDataGrid Items="@Elements" TGridItem="Element">
+<FluentDataGrid Items="@Elements" TGridItem="Element" ShowHover="true" OnRowClick="@HandleRowClick">
     <PropertyColumn Property="@(e => e.Id)" Sortable="true" />
     <PropertyColumn Property="@(e => e.Name)" Sortable="true" />
     <PropertyColumn Property="@(e => e.CreatedDate)" Format="yyyy-MM-dd" Sortable="true" />
     <TemplateColumn Title="Actions" Class="no-padding-column">
-        <FluentButton Appearance="Appearance.Accent"
-                      OnClick="@(() => EditItem(context))">
-            <FluentIcon Value="@(new Icons.Regular.Size20.Edit())" Color="Color.Fill" Style="vertical-align: middle;" />
-        </FluentButton>
-        <FluentButton Appearance="Appearance.Accent" 
-                      OnClick="@(() => DeleteItem(context))">
-            <FluentIcon Value="@(new Icons.Regular.Size20.Delete())" Color="Color.Fill" Style="vertical-align: middle;" />
-        </FluentButton>
+        <div @onclick:stopPropagation="true" style="display: flex; gap: 4px;">
+            <FluentButton Appearance="Appearance.Accent"
+                          OnClick="@(() => EditItem(context))">
+                <FluentIcon Value="@(new Icons.Regular.Size20.Edit())" Color="Color.Fill" Style="vertical-align: middle;" />
+            </FluentButton>
+            <FluentButton Appearance="Appearance.Accent"
+                          OnClick="@(() => DeleteItem(context))">
+                <FluentIcon Value="@(new Icons.Regular.Size20.Delete())" Color="Color.Fill" Style="vertical-align: middle;" />
+            </FluentButton>
+        </div>
     </TemplateColumn>
 </FluentDataGrid>
