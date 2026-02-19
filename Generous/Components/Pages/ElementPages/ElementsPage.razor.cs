@@ -15,37 +15,61 @@ namespace Generous.Components.Pages.ElementPages
         private List<Element> _elementList = new List<Element>();
         private IQueryable<Element> Elements => _elementList.AsQueryable();
 
-        protected override async Task OnInitializedAsync() {
+        protected override async Task OnInitializedAsync()
+        {
             await LoadDataAsync();
+            StateHasChanged();
         }
 
-        private async Task LoadDataAsync() {
+        private async Task LoadDataAsync()
+        {
             using var _context = DbFactory.CreateDbContext();
             _elementList = await _context.Elements.ToListAsync();
         }
-        private async Task AddElement() {
+        private async Task AddElement()
+        {
             var newElement = new Element();
+            Element? updatedElement = await OpenElementDialog(newElement);
+
+            if (updatedElement != null)
+            {
+
+                using var _context = DbFactory.CreateDbContext();
+                _context.Add(updatedElement);
+                _context.SaveChanges();
+
+                await LoadDataAsync();
+                StateHasChanged();
+            }
+        }
+
+        private async Task<Element?> OpenElementDialog(Element element)
+        {
+            Element returnElement = element;
 
             DialogParameters parameters = new()
             {
                 Title = $"Element Name",
                 TitleTypo = Typography.H2,
-                PrimaryAction = "Yes",
+                PrimaryAction = "Save",
                 PrimaryActionEnabled = true,
-                SecondaryAction = "No",
+                SecondaryAction = "Cancel",
                 Width = "500px",
                 TrapFocus = true,
                 Modal = true,
                 PreventScroll = true
             };
 
-            IDialogReference dialog = await DialogService.ShowDialogAsync<ElementDialog>(newElement, parameters);
+            IDialogReference dialog = await DialogService.ShowDialogAsync<ElementDialog>(element, parameters);
             DialogResult? result = await dialog.Result;
-            
-            using var _context = DbFactory.CreateDbContext();
-            _context.Add(result);
-            _context.SaveChanges();
-            StateHasChanged();
+
+            if (result.Cancelled)
+            {
+                return null;
+            }          
+
+            return returnElement;
         }
+
     }
 }

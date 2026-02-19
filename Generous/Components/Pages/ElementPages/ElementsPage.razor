@@ -1,5 +1,7 @@
 ﻿@page "/elements"
 @using Generous.Models
+@using Icons = Microsoft.FluentUI.AspNetCore.Components.Icons
+
 @rendermode InteractiveServer
 
 <h3>ElementsPage</h3>
@@ -10,5 +12,10 @@
     <PropertyColumn Property="@(e => e.Id)" Sortable="true" />
     <PropertyColumn Property="@(e => e.Name)" Sortable="true" />
     <PropertyColumn Property="@(e => e.CreatedDate)" Format="yyyy-MM-dd" Sortable="true" />
-    <PropertyColumn Property="@(e => e.ModifiedDate)" Format="yyyy-MM-dd" Sortable="true" />
+    <TemplateColumn Title="Actions" Class="no-padding-column">
+        <FluentButton Appearance="Appearance.Accent" 
+                      OnClick="AddElement" >
+            <FluentIcon Value="@(new Icons.Regular.Size20.Delete())" Color="Color.Fill" Style="vertical-align: middle;" />
+        </FluentButton>
+    </TemplateColumn>
 </FluentDataGrid>

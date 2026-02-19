@@ -217,3 +217,11 @@ table {
         vertical-align: middle;
         border-bottom: calc(var(--stroke-width) * 1px) solid var(--neutral-stroke-divider-rest);
     }
+
+/* Additions specific to this app appear after this comment */
+
+/* No Padding in a column or cell. So that that action buttons appear vertically centered */
+
+.no-padding-column {
+    padding: 0 !important;
+}
