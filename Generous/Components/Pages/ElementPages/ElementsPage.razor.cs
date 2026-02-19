@@ -86,6 +86,11 @@ namespace Generous.Components.Pages.ElementPages
 
         private async Task HandleRowClick(FluentDataGridRow<Element> args)
         {
+            if (args.Item is null)
+            {
+                return;
+            }
+
             var clickedElement = args.Item;
             await EditItem(clickedElement);
         }
