@@ -50,9 +50,7 @@ namespace Generous.Components.Pages.FieldPages
         {
             await LoadFieldTypesAsync();
 
-
             ToggleDialogPrimaryActionButton(!string.IsNullOrWhiteSpace(Content.Name));
-
         }
 
         private void ToggleDialogPrimaryActionButton(bool enable)

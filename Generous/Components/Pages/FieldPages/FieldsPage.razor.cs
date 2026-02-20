@@ -90,36 +90,6 @@ namespace Generous.Components.Pages.FieldPages
             }
             StateHasChanged();
         }
-
-        private async Task<Field?> OpenFieldDialog(Field field)
-        {
-            Field returnField = field;
-            Field savedField = CreateFieldCopy(field);
-
-            DialogParameters parameters = new()
-            {
-                Title = $"Feild For: {SelectedElement.Name}",
-                TitleTypo = Typography.H2,
-                PrimaryAction = "Save",
-                PrimaryActionEnabled = true,
-                SecondaryAction = "Cancel",
-                Width = "500px",
-                TrapFocus = true,
-                Modal = true,
-                PreventScroll = true
-            };
-
-            IDialogReference dialog = await DialogService.ShowDialogAsync<FieldDialog>(field, parameters);
-            DialogResult? result = await dialog.Result;
-
-            if (result.Cancelled)
-            {
-                return savedField;
-            }
-
-            return returnField;
-        }
-
         private async Task DeleteItem(Field field)
         {
             // 1. Show the built-in confirmation dialog
@@ -159,6 +129,17 @@ namespace Generous.Components.Pages.FieldPages
             }
         }
 
+        private async Task HandleRowClick(FluentDataGridRow<Field> args)
+        {
+            if (args.Item is null)
+            {
+                return;
+            }
+
+            var clickedField = args.Item;
+            await EditItem(clickedField);
+        }
+
         private Field CreateFieldCopy(Field field)
         {
             return new Field
@@ -168,9 +149,38 @@ namespace Generous.Components.Pages.FieldPages
                 Description = field.Description,
                 CreateDate = field.CreateDate,
                 ModifiedDate = field.ModifiedDate,
-                Element = field.Element,
-                FieldType = field.FieldType,
+                ElementId = field.ElementId,
+                FieldTypeId = field.FieldTypeId,
+                FixedColumnName = field.FixedColumnName,
             };
+        }
+        private async Task<Field?> OpenFieldDialog(Field field)
+        {
+            Field returnField = field;
+            Field savedField = CreateFieldCopy(field);
+
+            DialogParameters parameters = new()
+            {
+                Title = $"Feild For: {SelectedElement.Name}",
+                TitleTypo = Typography.H2,
+                PrimaryAction = "Save",
+                PrimaryActionEnabled = true,
+                SecondaryAction = "Cancel",
+                Width = "500px",
+                TrapFocus = true,
+                Modal = true,
+                PreventScroll = true
+            };
+
+            IDialogReference dialog = await DialogService.ShowDialogAsync<FieldDialog>(field, parameters);
+            DialogResult? result = await dialog.Result;
+
+            if (result.Cancelled)
+            {
+                return savedField;
+            }
+
+            return returnField;
         }
     }
 }

@@ -20,7 +20,7 @@
                   SelectedOptionChanged="@OnElementChanged" />
 </div>
 
-<FluentDataGrid Items="@FieldList" TGridItem="Field" ShowHover="true">
+<FluentDataGrid Items="@FieldList" TGridItem="Field" ShowHover="true" OnRowClick="@HandleRowClick">
     <PropertyColumn Property="@(e => e.Id)" Sortable="true" />
     <PropertyColumn Property="@(e => e.Name)" Sortable="true" />
     <PropertyColumn Property="@(e => e.FieldType.Name)" Sortable="true" />
