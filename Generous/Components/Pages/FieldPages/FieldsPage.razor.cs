@@ -18,9 +18,6 @@ namespace Generous.Components.Pages.FieldPages
         private IQueryable<Field> Fields => _fieldList.AsQueryable();
         protected override async Task OnInitializedAsync()
         {
-            using var _context = DbFactory.CreateDbContext();            
-            SelectedElement = await _context.Elements.FirstOrDefaultAsync();
-
             await LoadDataAsync();
         }
 
@@ -33,27 +30,32 @@ namespace Generous.Components.Pages.FieldPages
             using var _context = DbFactory.CreateDbContext();
 
             ElementList = await _context.Elements.ToListAsync();
-            
 
             //_fieldList = await _context.Fields
             //        .Where(f => f.Elements.Select(e => e.Id).Contains(SelectedElement.Id))
             //        .ToListAsync();
 
+            if (SelectedElement == null)
+            {
+                SelectedElement = ElementList.FirstOrDefault();
+            }
             StateHasChanged();
         }
 
         private async Task AddItem()
         {
+            using var _context = DbFactory.CreateDbContext();
             var newField = new Field();
+
+            newField.Element = await _context.Elements.Where(e => e.Id == SelectedElement.Id).FirstOrDefaultAsync();
+
             Field? updatedField = await OpenFieldDialog(newField);
 
             if (updatedField != null)
             {
-                using var _context = DbFactory.CreateDbContext();
-
                 updatedField.FixedColumnName = updatedField.Name.Replace(" ", "_").ToLower();
                 updatedField.ElementId = SelectedElement.Id;
-                
+
                 // This has to be set to null, or else it tries to updated it from FieldTypeId
                 // and from this feild type. And it fails this because of a db constraint.                
                 updatedField.FieldType = null;
@@ -72,7 +74,7 @@ namespace Generous.Components.Pages.FieldPages
 
             DialogParameters parameters = new()
             {
-                Title = $"Feild Name",
+                Title = $"Feild For: {SelectedElement.Name}",
                 TitleTypo = Typography.H2,
                 PrimaryAction = "Save",
                 PrimaryActionEnabled = true,
