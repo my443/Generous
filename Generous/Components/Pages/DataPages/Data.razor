@@ -1,0 +1,26 @@
+﻿@page "/data"
+@page "/data/{DataElementId:int}"
+@using Generous.Models
+@using Icons = Microsoft.FluentUI.AspNetCore.Components.Icons
+@rendermode InteractiveServer
+
+<h3>@Element?.Name Data</h3>
+
+@if (Element == null)
+{
+    <FluentDataGrid Items="@Elements.AsQueryable()" 
+                    TGridItem="Element" 
+                    ShowHover="true"
+                    OnRowClick="@ElementClick" 
+                    Style="width:100%">
+
+        <PropertyColumn Property="@(e=> e.Name)" Sortable="true" />
+    </FluentDataGrid>
+}
+else
+{
+    @Element?.Name
+}
+
+
+
