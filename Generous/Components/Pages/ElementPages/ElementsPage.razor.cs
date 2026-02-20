@@ -23,7 +23,7 @@ namespace Generous.Components.Pages.ElementPages
         private async Task LoadDataAsync()
         {
             using var _context = DbFactory.CreateDbContext();
-            _elementList = await _context.Elements.ToListAsync();
+            _elementList = await _context.Elements.OrderBy(e => e.Id ).ToListAsync();
 
             StateHasChanged();
         }

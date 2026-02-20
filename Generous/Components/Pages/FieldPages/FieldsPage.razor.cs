@@ -61,6 +61,7 @@ namespace Generous.Components.Pages.FieldPages
             _fieldList = await _context.Fields
                             .Include(f => f.FieldType)
                             .Where(f => f.ElementId == SelectedElement.Id)
+                            .OrderBy(f => f.Id)
                             .ToListAsync();
         }
 
@@ -136,6 +137,22 @@ namespace Generous.Components.Pages.FieldPages
             {
                 using var _context = DbFactory.CreateDbContext();
                 _context.Remove(field);
+                _context.SaveChanges();
+
+                await LoadDataAsync();
+            }
+        }
+
+        private async Task EditItem(Field field)
+        {
+            Field? updatedField = await OpenFieldDialog(field);
+
+            if (updatedField != null)
+            {
+                updatedField.ModifiedDate = DateTime.Now.ToUniversalTime();
+
+                using var _context = DbFactory.CreateDbContext();
+                _context.Update(updatedField);
                 _context.SaveChanges();
 
                 await LoadDataAsync();

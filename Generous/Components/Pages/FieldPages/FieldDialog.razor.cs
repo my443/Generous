@@ -48,8 +48,11 @@ namespace Generous.Components.Pages.FieldPages
 
         protected override async Task OnInitializedAsync()
         {
-            ToggleDialogPrimaryActionButton(!string.IsNullOrWhiteSpace(Content.Name));
             await LoadFieldTypesAsync();
+
+
+            ToggleDialogPrimaryActionButton(!string.IsNullOrWhiteSpace(Content.Name));
+
         }
 
         private void ToggleDialogPrimaryActionButton(bool enable)
@@ -60,8 +63,19 @@ namespace Generous.Components.Pages.FieldPages
         private async Task LoadFieldTypesAsync()
         {
             using var _context = DbFactory.CreateDbContext();
-            FieldTypesList = await _context.FieldTypes.ToListAsync();
-            SelectedFieldType = await _context.FieldTypes.FirstOrDefaultAsync();
+            FieldTypesList = await _context.FieldTypes.OrderBy(ft => ft.Id).ToListAsync();
+
+            if (Content?.FieldType != null)
+            {
+                SelectedFieldType = FieldTypesList?
+                            .FirstOrDefault(ft => ft.Id == Content.FieldType.Id);
+            }
+            else if (SelectedFieldType == null)
+            {
+                SelectedFieldType = await _context.FieldTypes
+                                                 .OrderBy(ft => ft.Id)
+                                                 .FirstOrDefaultAsync();
+            }
         }
     }
 }

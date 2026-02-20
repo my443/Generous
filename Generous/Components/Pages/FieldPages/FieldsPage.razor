@@ -27,6 +27,14 @@
     <PropertyColumn Property="@(e => e.CreateDate)" Format="yyyy-MM-dd" Sortable="true" />
     <TemplateColumn Title="Actions" Class="no-padding-column">
         <div @onclick:stopPropagation="true" style="display: flex; gap: 4px;">
+            <FluentButton Appearance="Appearance.Accent"
+                          OnClick="@(() => EditItem(context))">
+                <FluentIcon Value="@(new Icons.Regular.Size20.Edit())" Color="Color.Fill" Style="vertical-align: middle;" />
+            </FluentButton>
+            <FluentButton Appearance="Appearance.Accent"
+                          OnClick="@(() => DeleteItem(context))">
+                <FluentIcon Value="@(new Icons.Regular.Size20.Delete())" Color="Color.Fill" Style="vertical-align: middle;" />
+            </FluentButton>
         </div>
     </TemplateColumn>
 </FluentDataGrid>
