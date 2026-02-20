@@ -18,6 +18,9 @@ namespace Generous.Components.Pages.FieldPages
         private IQueryable<Field> Fields => _fieldList.AsQueryable();
         protected override async Task OnInitializedAsync()
         {
+            using var _context = DbFactory.CreateDbContext();            
+            SelectedElement = await _context.Elements.FirstOrDefaultAsync();
+
             await LoadDataAsync();
         }
 
@@ -30,7 +33,7 @@ namespace Generous.Components.Pages.FieldPages
             using var _context = DbFactory.CreateDbContext();
 
             ElementList = await _context.Elements.ToListAsync();
-            SelectedElement = await _context.Elements.FirstOrDefaultAsync();
+            
 
             //_fieldList = await _context.Fields
             //        .Where(f => f.Elements.Select(e => e.Id).Contains(SelectedElement.Id))
