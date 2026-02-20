@@ -119,6 +119,29 @@ namespace Generous.Components.Pages.FieldPages
             return returnField;
         }
 
+        private async Task DeleteItem(Field field)
+        {
+            // 1. Show the built-in confirmation dialog
+            var dialog = await DialogService.ShowConfirmationAsync(
+                message: $"Are you sure you want to delete '{field.Name}'?",
+                primaryText: "Delete",
+                secondaryText: "Cancel",
+                title: "Confirm Delete");
+
+            var result = await dialog.Result;
+
+            // 2. Check if the user clicked "Delete" (Primary Action)
+            // result.Cancelled is true if they click "Cancel" or the 'X'
+            if (!result.Cancelled)
+            {
+                using var _context = DbFactory.CreateDbContext();
+                _context.Remove(field);
+                _context.SaveChanges();
+
+                await LoadDataAsync();
+            }
+        }
+
         private Field CreateFieldCopy(Field field)
         {
             return new Field
