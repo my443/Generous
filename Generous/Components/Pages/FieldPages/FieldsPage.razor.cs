@@ -3,6 +3,7 @@ using Generous.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.FluentUI.AspNetCore.Components;
+using System.Xml.Linq;
 
 namespace Generous.Components.Pages.FieldPages
 {
@@ -12,13 +13,24 @@ namespace Generous.Components.Pages.FieldPages
         [Inject] public IDialogService DialogService { get; set; }
         
         private List<Element> ElementList { get; set; } = new List<Element>();
-        private Element SelectedElement { get; set; }
+
+        private Element? _selectedElement;
+
+        private Element? SelectedElement
+        {
+            get => _selectedElement;
+            set => _selectedElement = value; // Keep this simple
+        }
+        //private Element SelectedElement { get; set; }
 
         private List<Field> _fieldList = new List<Field>();
-        private IQueryable<Field> Fields => _fieldList.AsQueryable();
+        private IQueryable<Field> FieldList => _fieldList.AsQueryable();
         protected override async Task OnInitializedAsync()
         {
+            using var _context = DbFactory.CreateDbContext();
+            ElementList = await _context.Elements.ToListAsync();
             await LoadDataAsync();
+            await OnElementChanged(SelectedElement);            // To get the list the first time. 
         }
 
         protected override async Task OnParametersSetAsync()
@@ -29,17 +41,27 @@ namespace Generous.Components.Pages.FieldPages
         private async Task LoadDataAsync() {
             using var _context = DbFactory.CreateDbContext();
 
-            ElementList = await _context.Elements.ToListAsync();
-
-            //_fieldList = await _context.Fields
-            //        .Where(f => f.Elements.Select(e => e.Id).Contains(SelectedElement.Id))
-            //        .ToListAsync();
-
             if (SelectedElement == null)
             {
                 SelectedElement = ElementList.FirstOrDefault();
             }
+
+            await OnElementChanged(SelectedElement);
+
             StateHasChanged();
+        }
+
+        private async Task OnElementChanged(Element? element) {
+            if (element == null) return;
+
+            // Keep the reference from the list we already have
+            SelectedElement = ElementList.FirstOrDefault(e => e.Id == element.Id);
+
+            using var _context = DbFactory.CreateDbContext();
+            _fieldList = await _context.Fields
+                            .Include(f => f.FieldType)
+                            .Where(f => f.ElementId == SelectedElement.Id)
+                            .ToListAsync();
         }
 
         private async Task AddItem()
@@ -47,7 +69,7 @@ namespace Generous.Components.Pages.FieldPages
             using var _context = DbFactory.CreateDbContext();
             var newField = new Field();
 
-            newField.Element = await _context.Elements.Where(e => e.Id == SelectedElement.Id).FirstOrDefaultAsync();
+            //newField.Element = await _context.Elements.Where(e => e.Id == SelectedElement.Id).FirstOrDefaultAsync();
 
             Field? updatedField = await OpenFieldDialog(newField);
 
@@ -65,6 +87,7 @@ namespace Generous.Components.Pages.FieldPages
 
                 await LoadDataAsync();
             }
+            StateHasChanged();
         }
 
         private async Task<Field?> OpenFieldDialog(Field field)

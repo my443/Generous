@@ -7,14 +7,27 @@
 
 <FluentButton Appearance="Appearance.Accent" OnClick="AddItem">Add Field</FluentButton>
 
-<FluentSelect TOption="Element"
-              Label="Select Element"
-              Items="@ElementList"
-              Id="element-listbox"
-              Width="100%"
-              OptionText="@(e => e.Name)"
-              @bind-SelectedOption="@SelectedElement" />
+<div style="display: grid; grid-template-columns: max-content 1fr; align-items: center; gap: 12px; width: 100%;">
+    <div style="flex-shrink: 0; white-space: nowrap;">
+        <FluentLabel For="element-listbox">Select Element</FluentLabel>
+    </div>
+    <FluentSelect TOption="Element"
+                  Items="@ElementList"
+                  Id="element-listbox"
+                  Width="100%"
+                  OptionText="@(e => e.Name)"
+                  SelectedOption="@SelectedElement"
+                  SelectedOptionChanged="@OnElementChanged" />
+</div>
 
-
-
+<FluentDataGrid Items="@FieldList" TGridItem="Field" ShowHover="true">
+    <PropertyColumn Property="@(e => e.Id)" Sortable="true" />
+    <PropertyColumn Property="@(e => e.Name)" Sortable="true" />
+    <PropertyColumn Property="@(e => e.FieldType.Name)" Sortable="true" />
+    <PropertyColumn Property="@(e => e.CreateDate)" Format="yyyy-MM-dd" Sortable="true" />
+    <TemplateColumn Title="Actions" Class="no-padding-column">
+        <div @onclick:stopPropagation="true" style="display: flex; gap: 4px;">
+        </div>
+    </TemplateColumn>
+</FluentDataGrid>
 
