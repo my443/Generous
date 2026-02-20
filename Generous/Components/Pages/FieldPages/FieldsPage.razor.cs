@@ -177,7 +177,7 @@ namespace Generous.Components.Pages.FieldPages
 
             if (result.Cancelled)
             {
-                return savedField;
+                return null;            // Return null so that nothing is saved
             }
 
             return returnField;

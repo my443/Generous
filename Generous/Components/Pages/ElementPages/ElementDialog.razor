@@ -7,6 +7,7 @@
 <FluentStack Orientation="Orientation.Vertical" VerticalGap="15" Style="width: 100%;">
     
     <FluentTextField @bind-Value="NameValue"
+                     Immediate="true"
                      Style="width: 100%;">
         Element Name:
     </FluentTextField>
@@ -19,35 +20,3 @@
 
 </FluentStack>
 
-@code {
-    [Parameter]
-    public Element Content { get; set; } = default!;
-
-    [CascadingParameter]
-    public FluentDialog? Dialog { get; set; }
-
-    private string? NameValue
-    {
-        get => Content.Name;
-        set
-        {
-            if (Content.Name != value)
-            {
-                Content.Name = value;
-                // This fires every time the user types!
-                ToggleDialogPrimaryActionButton(!string.IsNullOrWhiteSpace(value));
-            }
-        }
-    }
-
-    protected override void OnInitialized()
-    {
-        ToggleDialogPrimaryActionButton(!string.IsNullOrWhiteSpace(Content.Name));
-    }
-
-    private void ToggleDialogPrimaryActionButton(bool enable)
-    {
-        Dialog!.TogglePrimaryActionButton(enable);
-    }
-
-}

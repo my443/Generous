@@ -34,7 +34,6 @@ namespace Generous.Components.Pages.ElementPages
 
             if (updatedElement != null)
             {
-
                 using var _context = DbFactory.CreateDbContext();
                 _context.Add(updatedElement);
                 _context.SaveChanges();
@@ -117,7 +116,7 @@ namespace Generous.Components.Pages.ElementPages
 
             if (result.Cancelled)
             {
-                return savedElement;
+                return null;            // Return null so that nothing is saved
             }
 
             return returnElement;
